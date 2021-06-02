@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width" />
+      <title>Store</title>
+   </head>
+   <body>
+
+      <form action="/store/add_item_submit" method="post" accept-charset="utf-8">
+         <label for="product_name">Product Name</label>
+         <input type="text" name="product_name" id="product_name" value="" />
+	 
+	 <br><br>
+	 
+         <label for="address">Address</label>
+         <input type="text" name="address" id="address" value="" />
+
+	 <br><br>
+	 
+         <label for="unit_price">Unit Price</label>
+         <input type="text" name="unit_price" id="unit_price" value="" />
+
+	 <br><br>
+	 
+         <label for="supplier">Supplier</label>
+         <input type="text" name="supplier" id="supplier" value="" />
+
+	 <br><br>
+	 
+         <label for="produce_date">Produce Date</label>
+         <input type="date" name="produce_date" id="produce_date" value="" />
+
+	 <br><br>
+	 
+         <label for="expire_date">Expire Date</label>
+         <input type="date" name="expire_date" id="expire_date" value="" />
+
+	 <br><br>
+	 
+         <label for="number_weight">Number Weight</label>
+         <input type="text" name="number_weight" id="number_weight" value="" />
+
+	 <br><br>
+	 
+         <p><input type="submit" value="login"></p>
+      </form>
+      {% if flash.message %}
+      <p> {{ flash.message }} </p>
+      {% endif %}
+   </body>
+</html>

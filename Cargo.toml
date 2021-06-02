@@ -1,0 +1,18 @@
+[package]
+name = "smallshop"
+version = "0.1.0"
+authors = ["Ali R. Nik <arnik@tutanota.com>"]
+edition = "2018"
+
+[dependencies]
+rocket = { git = "https://github.com/SergioBenitez/Rocket", branch = "master", features = ["secrets", "json"] }
+
+rocket_sync_db_pools = { git = "https://github.com/SergioBenitez/Rocket/", branch = "master", features = ["diesel_postgres_pool"] }
+
+rocket_dyn_templates = { git = "https://github.com/SergioBenitez/Rocket/", branch = "master", features = ["handlebars"] }
+
+diesel = { version = "1.3", features = ["postgres", "r2d2"] }
+diesel_migrations = "1.3"
+rust-crypto = "0.2.36"
+time = {version = "0.2.26", features = ["serde"]}
+fluent-templates = { version = "0.6.1", features = ["handlebars"] }
