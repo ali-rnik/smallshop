@@ -12,6 +12,7 @@ use rocket::http::{Cookie, CookieJar};
 use rocket::form::Form;
 
 use rocket_dyn_templates::Template;
+use crate::config;
 
 #[derive(Debug)]
 pub struct User(pub String);
@@ -38,18 +39,17 @@ struct Login<'r> {
 }
 
 #[get("/login")]
-fn login_page(flash: Option<FlashMessage<'_>>) -> Template {
+fn login_page(config: config::Config,
+	      flash: Option<FlashMessage<'_>>) -> Template {
     
     let mut context = HashMap::new();
-
+    config::i18n(config, &mut context);
     let tup;
     match flash {
 	Some(i) => tup = i.into_inner(),
 	None => tup = ("none".to_string(), "none".to_string())
     };
     context.insert("flash_kind", tup.0);
-    context.insert("lang", "fa".to_string());
-    context.insert("dir", "rtl".to_string());
     
     Template::render("login", context)
 }

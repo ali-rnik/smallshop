@@ -9,24 +9,37 @@ use rocket_dyn_templates::Template;
 use crate::login;
 use crate::models;
 use crate::schema;
+use crate::config;
 use crate::diesel_pgsql::Db;
 
 use rocket_sync_db_pools::diesel;
 use self::diesel::prelude::*;
 
 #[get("/")]
-fn store(user: login::User) -> Template {
+fn store(config: config::Config, user: login::User) -> Template {
     let mut context = HashMap::new();
+    config::i18n(config, &mut context);
+    
     context.insert("user_hash", user.0);
+
     Template::render("store", context)
 }
 
 #[get("/add_item")]
-fn store_add_item(_user: login::User, flash: Option<FlashMessage<'_>>)
+fn store_add_item(config: config::Config,
+		  _user: login::User,
+		  flash: Option<FlashMessage<'_>>)
 		  -> Template
 {
     let mut context = HashMap::new();
-    context.insert("flash", &flash);
+    config::i18n(config, &mut context);
+    
+    let tup;
+    match flash {
+	Some(i) => tup = i.into_inner(),
+	None => tup = ("none".to_string(), "none".to_string())
+    };
+    context.insert("flash_kind", tup.0);
 
     Template::render("store_add-item", context)
 }
@@ -53,7 +66,8 @@ async fn store_add_item_submit(_user: login::User,
 }
 
 #[get("/list_items")]
-async fn store_list_items(_user: login::User,
+async fn store_list_items(config: config::Config,
+			  _user: login::User,
 			  db: Db)
     -> Template
 {
@@ -67,6 +81,7 @@ async fn store_list_items(_user: login::User,
 
     
     let mut context = HashMap::new();
+//    config::i18n(config, &mut context);
     context.insert("table", table);
 
     Template::render("store_list-items", context)
