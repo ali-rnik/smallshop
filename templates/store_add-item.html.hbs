@@ -45,11 +45,11 @@
 	 
          <p><input type="submit" value="{{fluent "submit"}}"></p>
       </form>
-      {{#if (eq flash_kind "success") }}
+      {{#if (eq flash.kind "success") }}
       <p> {{fluent "store-add-item-success-message"}} </p>
       {{/if}}
       
-      {{#if (eq flash_kind "error") }}
+      {{#if (eq flash.kind "error") }}
       <p> {{fluent "store-add-item-error-message"}} </p>
       {{/if}}
 

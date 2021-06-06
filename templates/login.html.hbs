@@ -9,7 +9,7 @@
       <h1>{{fluent "login-header"}}</h1>
 
 
-      {{#if (eq flash_kind "error")}}
+      {{#if (eq flash.kind "error")}}
       <p> {{fluent "login-error-message"}} </p>
       <form action="/login" method="post" accept-charset="utf-8">
          <label for="username">{{fluent "login-username"}}</label>
@@ -20,7 +20,7 @@
       </form>
       {{/if}}
       
-      {{#if (eq flash_kind "none")}}
+      {{#if (eq flash None)}}
 
       <form action="/login" method="post" accept-charset="utf-8">
          <label for="username">{{fluent "login-username"}}</label>
@@ -33,7 +33,7 @@
       {{/if}}
       
       
-      {{#if (eq flash_kind "success")}}
+      {{#if (eq flash.kind "success")}}
       <p> {{fluent "login-success-message"}} </p>
       {{/if}}
 

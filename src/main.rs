@@ -3,11 +3,10 @@
 #[macro_use] extern crate diesel_migrations;
 #[macro_use] extern crate diesel;
 
-use std::collections::HashMap;
-
 use fluent_templates::{FluentLoader, static_loader};
 
 use rocket_dyn_templates::Template;
+use std::collections::HashMap;
 
 pub mod login;
 pub mod store;
@@ -26,18 +25,16 @@ static_loader! {
 
 #[get("/")]
 fn index(config: config::Config, user: login::User) -> Template {
-    let mut context = HashMap::new();
-
-    config::i18n(config, &mut context);
-    context.insert("userinfo_hash", user.0);
+    let mut data = HashMap::new();
+    data.insert("userinfo_hash", user.0);
+    let context = config::Context::new(config::i18n(config), data ,"");
     
     Template::render("index", context)
 }
 
 #[get("/", rank = 2)]
 fn no_auth_index(config: config::Config) -> Template {
-    let mut context = HashMap::new();
-    config::i18n(config, &mut context);
+    let context = config::Context::new(config::i18n(config), "" ,"");	
     Template::render("index", context)
 }
 

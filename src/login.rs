@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use rocket::form::FromForm;
 
 use crypto::digest::Digest;
@@ -41,16 +39,9 @@ struct Login<'r> {
 #[get("/login")]
 fn login_page(config: config::Config,
 	      flash: Option<FlashMessage<'_>>) -> Template {
-    
-    let mut context = HashMap::new();
-    config::i18n(config, &mut context);
-    let tup;
-    match flash {
-	Some(i) => tup = i.into_inner(),
-	None => tup = ("none".to_string(), "none".to_string())
-    };
-    context.insert("flash_kind", tup.0);
-    
+    let context = config::Context::new(config::i18n(config), "" , &flash);
+
+    println!("{:#?}", context);
     Template::render("login", context)
 }
 
