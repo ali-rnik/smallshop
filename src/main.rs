@@ -14,6 +14,7 @@ pub mod models;
 pub mod diesel_pgsql;
 pub mod schema;
 pub mod config;
+pub mod session;
 
 static_loader! {
     static LOCALES = {
