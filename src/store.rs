@@ -51,8 +51,10 @@ async fn store_add_item_submit(
         .await
         .expect("Could not insert into db!");
 
-        Flash::success(Redirect::to(uri!("/store", store_add_item)),
-		       "Added Item")
+        Flash::success(
+            Redirect::to(uri!("/store", store_add_item)),
+            "Added Item",
+        )
     } else {
         Flash::error(
             Redirect::to(uri!("/store", store_add_item)),
@@ -64,7 +66,8 @@ async fn store_add_item_submit(
 #[get("/list_items")]
 async fn store_list_items(
     config: config::Config,
-    _user: login::User, db: Db
+    _user: login::User,
+    db: Db,
 ) -> Template {
     let table: Vec<(Option<i32>, String, String)> = db
         .run(move |conn| {
@@ -88,7 +91,7 @@ async fn store_list_items(
 async fn store_delete_item(
     _user: login::User,
     db: Db,
-    id: i32
+    id: i32,
 ) -> Flash<Redirect> {
     db.run(move |conn| {
         diesel::delete(schema::products::table)
@@ -108,14 +111,12 @@ async fn store_delete_item(
 async fn add_to_basket(
     product_id: i32,
     jar: &CookieJar<'_>,
-    number: i32
+    number: i32,
 ) -> Flash<Redirect> {
     jar.add_private(Cookie::new(
         "product_in_basket___".to_string() + &product_id.to_string(),
         number.to_string(),
     ));
-
-    println!("{:#?}", jar);
 
     Flash::success(
         Redirect::to(uri!("/store", store_list_items)),
@@ -124,21 +125,40 @@ async fn add_to_basket(
 }
 
 #[get("/show_basket")]
-async fn show_basket(jar: &CookieJar<'_>, config: config::Config) -> Template {
+async fn show_basket(
+    jar: &CookieJar<'_>,
+    config: config::Config,
+    db: Db,
+) -> Template {
+    let mut table: Vec<(Option<i32>, String, String)> = Vec::new();
     for c in jar.iter() {
-	let id = match c.name().strip_prefix("product_in_basket___") {
-	    Some(id) => id,
-	    None => "",
-	};
+        let id = match c.name().strip_prefix("product_in_basket___") {
+            Some(id) => id,
+            None => "",
+        };
 
-	println!("{}", id);
+        if id != "" {
+            let idint = id.parse::<i32>().unwrap();
+            let rec: (Option<i32>, String, String) = db
+                .run(move |conn| {
+                    schema::products::table
+                        .select((
+                            schema::products::product_id,
+                            schema::products::product_name,
+                            schema::products::unit_price,
+                        ))
+                        .filter(schema::products::product_id.eq(idint))
+                        .first(conn)
+                })
+                .await
+                .expect("Could not load id's from database");
+            table.push(rec);
+        }
     }
 
-    let context = config::Context::new(config::i18n(config), "", "");
+    let context = config::Context::new(config::i18n(config), table, "");
 
-    Template::render("store_list-items", context)
-
-    
+    Template::render("store_show-basket", context)
 }
 
 pub fn stage() -> Vec<rocket::Route> {
@@ -149,23 +169,6 @@ pub fn stage() -> Vec<rocket::Route> {
         store_list_items,
         store_delete_item,
         add_to_basket,
-	show_basket
+        show_basket
     ]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

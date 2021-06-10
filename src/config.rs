@@ -12,8 +12,8 @@ pub struct Config(pub String);
 pub struct Context<T: Serialize, F: Serialize> {
     lang: String,
     dir: String,
-    data: T,
-    flash: F,
+    pub data: T,
+    pub flash: F,
 }
 
 #[derive(Debug)]
@@ -28,7 +28,7 @@ impl<T: Serialize, F: Serialize> Context<T, F> {
             lang: lang_struct.lang,
             dir: lang_struct.dir,
             data,
-            flash
+            flash,
         }
     }
 }
@@ -37,8 +37,9 @@ impl<T: Serialize, F: Serialize> Context<T, F> {
 impl<'r> FromRequest<'r> for Config {
     type Error = std::convert::Infallible;
 
-    async fn from_request(request: &'r Request<'_>)
-			  -> request::Outcome<Config, Self::Error> {
+    async fn from_request(
+        request: &'r Request<'_>,
+    ) -> request::Outcome<Config, Self::Error> {
         let default_cookie = Cookie::new("lang", "fa");
         let cookie = request
             .cookies()
@@ -51,7 +52,7 @@ impl<'r> FromRequest<'r> for Config {
         }
 
         let outcome: Outcome<Config, Self::Error> =
-	    Success(Config(lang.to_string()));
+            Success(Config(lang.to_string()));
 
         outcome
     }
@@ -72,9 +73,15 @@ fn set_lang(jar: &CookieJar<'_>, lang: String) -> Redirect {
 
 pub fn i18n(config: Config) -> Lang {
     if config.0 == "fa" {
-        Lang{lang: "fa".to_string(), dir: "rtl".to_string()}
+        Lang {
+            lang: "fa".to_string(),
+            dir: "rtl".to_string(),
+        }
     } else {
-        Lang{lang: "en".to_string(), dir: "ltr".to_string()}
+        Lang {
+            lang: "en".to_string(),
+            dir: "ltr".to_string(),
+        }
     }
 }
 

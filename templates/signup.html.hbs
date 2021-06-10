@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html dir={{dir}} lang={{lang}}>
+   <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width" />
+      <title>{{fluent "title-signup"}}</title>
+   </head>
+   <body>
+      <h1>{{fluent "header-signup"}}</h1>
+
+      <form action="/signup" method="post" accept-charset="utf-8">
+	
+	 <label for="username">{{fluent "username"}}</label>
+         <input type="text" name="username" id="username" value="" />
+         {{#each data.errors.username}} {{this.msg}} {{/each}}
+         <br><br>
+
+         <label for="email">{{fluent "email"}}</label>
+         <input type="email" name="email" id="email" value="" />  
+         {{#each data.errors.email}} {{this.msg}} {{/each}}
+         <br><br>
+           
+         <label for="password">{{fluent "password"}}</label>
+         <input type="password" name="password.first" id="password.first" value="" />
+         {{#each data.errors.[password.first]}} {{this.msg}} {{/each}}         
+         <br><br>        
+          
+         <label for="rep_password">{{fluent "rep_password"}}</label>
+         <input type="password" name="password.second" id="password.second" value="" />
+         {{#each data.errors.[password.second]}} {{this.msg}} {{/each}}    
+         <br><br>                       
+         
+         <p><input type="submit" value="{{fluent "submit"}}"></p>
+      </form>
+
+   </body>
+</html>
+

@@ -10,4 +10,3 @@ table! {
         unit_price -> Text,
     }
 }
-

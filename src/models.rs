@@ -1,11 +1,12 @@
-use rocket::serde::{Serialize, Deserialize};
+use rocket::serde::{Deserialize, Serialize};
 
 use crate::schema::products;
 
-#[derive(FromForm)]
-#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable)]
+#[derive(
+    FromForm, Debug, Clone, Deserialize, Serialize, Queryable, Insertable,
+)]
 #[serde(crate = "rocket::serde")]
-#[table_name="products"]
+#[table_name = "products"]
 pub struct Product {
     #[serde(skip_deserializing)]
     pub product_id: Option<i32>,
@@ -17,6 +18,3 @@ pub struct Product {
     pub address: String,
     pub unit_price: String,
 }
-
-
-
