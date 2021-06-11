@@ -6,4 +6,3 @@ username = نام کاربری
 password = پسورد
 rep_password = تکرار پسورد
 email = ایمیل
-

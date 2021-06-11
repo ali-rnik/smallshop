@@ -1,6 +1,10 @@
 use crate::schema::{products, users};
+use crypto::digest::Digest;
+use crypto::sha2::Sha256;
 use rocket::serde::{Deserialize, Serialize};
 use std::time::SystemTime;
+
+use crate::signup;
 
 #[derive(
     FromForm, Debug, Clone, Deserialize, Serialize, Queryable, Insertable,
@@ -29,4 +33,19 @@ pub struct User {
     pub password: String,
     pub email: String,
     pub joined: SystemTime,
+}
+
+impl User {
+    pub fn new(signup: &signup::Signup) -> Self {
+        let mut hasher = Sha256::new();
+        hasher.input_str(signup.password.first);
+
+        Self {
+            id: None,
+            username: signup.username.to_string(),
+            password: hasher.result_str(),
+            email: signup.email.to_string(),
+            joined: SystemTime::now(),
+        }
+    }
 }
