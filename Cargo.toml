@@ -18,3 +18,4 @@ time = {version = "0.2.26", features = ["serde"]}
 fluent-templates = { version = "0.6.1", features = ["handlebars"] }
 serde_derive = "1.0.126"
 serde = "1.0.126"
+chrono = "0.4.19"

@@ -41,7 +41,11 @@ fn signup_submit<'r>(
 				       "");
 
     let template = match signup.value {
-	Some(ref _suval) => Template::render("index", &context),
+	Some(ref _suval) => {
+	    println!("{:#?}", _suval);
+	    Template::render("index", &context)
+	    
+	}
 	None => Template::render("signup", &context),
 
     };

@@ -10,3 +10,13 @@ table! {
         unit_price -> Text,
     }
 }
+
+table! {
+    users (id) {
+        id -> Nullable<Integer>,
+        username -> Text,
+	password -> Text,
+	email -> Text,
+	joined -> Timestamp,
+    }
+}
