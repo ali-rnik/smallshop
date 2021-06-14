@@ -19,7 +19,7 @@ use rocket_sync_db_pools::diesel;
 #[get("/")]
 fn store(config: config::Config, user: login::User) -> Template {
     let mut data = HashMap::new();
-    data.insert("userinfo_hash", user.0);
+    data.insert("session-id", user.0);
     let context = config::Context::new(config::i18n(config), data, "");
 
     Template::render("store", context)
@@ -87,6 +87,26 @@ async fn store_list_items(
     Template::render("store_list-items", context)
 }
 
+#[get("/list_items", rank = 2)]
+async fn public_store_list_items(config: config::Config, db: Db) -> Template {
+    let table: Vec<(Option<i32>, String, String)> = db
+        .run(move |conn| {
+            schema::products::table
+                .select((
+                    schema::products::product_id,
+                    schema::products::product_name,
+                    schema::products::unit_price,
+                ))
+                .load(conn)
+        })
+        .await
+        .expect("Could not load id's from database");
+
+    let context = config::Context::new(config::i18n(config), table, "");
+
+    Template::render("public_store_list-items", context)
+}
+
 #[get("/delete_item/<id>")]
 async fn store_delete_item(
     _user: login::User,
@@ -151,7 +171,8 @@ async fn show_basket(
                         .first(conn)
                 })
                 .await
-                .expect("Could not load id's from database");
+                .unwrap_or_else(|_| (Some(0), "".to_string(), "".to_string()));
+
             table.push(rec);
         }
     }
@@ -161,12 +182,15 @@ async fn show_basket(
     Template::render("store_show-basket", context)
 }
 
+/*#[get("/buy_and_pay")]*/
+
 pub fn stage() -> Vec<rocket::Route> {
     routes![
         store,
         store_add_item,
         store_add_item_submit,
         store_list_items,
+        public_store_list_items,
         store_delete_item,
         add_to_basket,
         show_basket

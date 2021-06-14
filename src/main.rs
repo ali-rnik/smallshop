@@ -31,7 +31,7 @@ static_loader! {
 #[get("/")]
 fn index(config: config::Config, user: login::User) -> Template {
     let mut data = HashMap::new();
-    data.insert("userinfo_hash", user.0);
+    data.insert("session-id", user.0);
     let context = config::Context::new(config::i18n(config), data, "");
 
     Template::render("index", context)

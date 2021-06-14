@@ -5,11 +5,17 @@ use crypto::sha2::Sha256;
 
 use rocket::form::Form;
 use rocket::http::{Cookie, CookieJar};
-use rocket::outcome::IntoOutcome;
+use rocket::request::Outcome;
 use rocket::request::{self, FlashMessage, FromRequest, Request};
 use rocket::response::{Flash, Redirect};
 
 use crate::config;
+use crate::diesel_pgsql::Db;
+use crate::schema;
+
+use self::diesel::prelude::*;
+use rocket_sync_db_pools::diesel;
+
 use rocket_dyn_templates::Template;
 
 #[derive(Debug)]
@@ -22,16 +28,45 @@ impl<'r> FromRequest<'r> for User {
     async fn from_request(
         request: &'r Request<'_>,
     ) -> request::Outcome<User, Self::Error> {
-        request
+        let db = request.guard::<Db>().await.unwrap();
+        let username: String = request
             .cookies()
-            .get_private("userinfo_hash")
-            .and_then(|cookie| cookie.value().parse().ok())
-            .map(User)
-            .or_forward(())
+            .get_private("username_cookie")
+            .unwrap_or_else(|| Cookie::new("username_cookie", ""))
+            .value()
+	    .to_string();
+
+        let sess_id: String = request
+            .cookies()
+            .get_private("session-id")
+            .unwrap_or_else(|| Cookie::new("session-id", ""))
+            .value()
+	    .to_string();
+
+	let uname = username.clone();
+        let password: String = db
+            .run(move |conn| {
+                schema::users::table
+                    .select(schema::users::password)
+                    .filter(schema::users::username.eq(uname))
+                    .first(conn)
+            })
+            .await
+            .expect("Could not load from database");
+
+        let cur_sess_id = sha256sum(username.to_string() + password.as_str());
+        let outcome: Outcome<User, Self::Error>;
+
+        if sess_id == cur_sess_id {
+            outcome = Outcome::Success(User(username.to_string()));
+        } else {
+            outcome = Outcome::Forward(());
+	}
+        outcome
     }
 }
 
-#[derive(FromForm, Debug)]
+#[derive(FromForm, Debug, Clone, Copy)]
 struct Login<'r> {
     username: &'r str,
     password: &'r str,
@@ -67,28 +102,45 @@ fn login_page(
 }
 
 #[post("/login", data = "<login>")]
-fn post_login(
+async fn post_login(
     jar: &CookieJar<'_>,
-    login: Form<Login<'_>>
+    login: Form<Login<'_>>,
+    db: Db,
 ) -> Flash<Redirect> {
-    if login.username == "Ali" && login.password == "password" {
-        let mut hasher = Sha256::new();
-        hasher.input_str(&(login.username.to_string() + login.password));
+    let username = login.username.to_string();
+    let password: String = db
+        .run(move |conn| {
+            schema::users::table
+                .select(schema::users::password)
+                .filter(schema::users::username.eq(username))
+                .first(conn)
+        })
+        .await
+        .expect("Could not load from database");
 
-        jar.add_private(Cookie::new("userinfo_hash", hasher.result_str()));
-        Flash::success(
-            Redirect::to(uri!(login_page)),
-            "Successful login",
-        )
+    let sha_login_pass = sha256sum(login.password.to_string());
+    let userinfo =
+        sha256sum(login.username.to_string() + sha_login_pass.as_str());
+
+    if sha_login_pass == password {
+        jar.add_private(Cookie::new(
+            "username_cookie",
+            login.username.to_string(),
+        ));
+        jar.add_private(Cookie::new("session-id", userinfo));
+
+        Flash::success(Redirect::to(uri!(login_page)), "Successful login")
     } else {
-	Flash::error(
-            Redirect::to(uri!(login_page)),
-            "Invalid user/pass",
-        )
+        Flash::error(Redirect::to(uri!(login_page)), "Invalid user/pass")
     }
 }
 
-
 pub fn stage() -> Vec<rocket::Route> {
     routes![login_page, post_login]
+}
+
+fn sha256sum(s: String) -> String {
+    let mut hasher = Sha256::new();
+    hasher.input_str(s.as_str());
+    hasher.result_str()
 }
