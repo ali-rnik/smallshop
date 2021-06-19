@@ -1,37 +1,44 @@
 {{#*inline "page"}}
-      <form action="/store/add_item_submit" method="post" accept-charset="utf-8">
+      <form action="/store/update_item_submit" method="post" accept-charset="utf-8">
          <label for="product_name">{{fluent "poduct-name"}}</label>
-         <input type="text" name="product_name" id="product_name" value="" />
+         <input type="text" name="product_name" id="product_name" \
+		value="{{data.product_name}}" />
 	 
 	 <br><br>
 	 
          <label for="address">{{fluent "address"}}</label>
-         <input type="text" name="address" id="address" value="" />
+         <input type="text" name="address" id="address"\
+		value="{{data.address}}" />
 
 	 <br><br>
 	 
          <label for="unit_price">{{fluent "unit-price"}}</label>
-         <input type="text" name="unit_price" id="unit_price" value="" />
+         <input type="text" name="unit_price" id="unit_price"\
+		value="{{data.unit_price}}" />
 
 	 <br><br>
 	 
          <label for="supplier">{{fluent "supplier"}}</label>
-         <input type="text" name="supplier" id="supplier" value="" />
+         <input type="text" name="supplier" id="supplier"\
+		value="{{data.supplier}}" />
 
 	 <br><br>
 	 
          <label for="produce_date">{{fluent "produce-date"}}</label>
-         <input type="date" name="produce_date" id="produce_date" value="" />
+         <input type="date" name="produce_date" id="produce_date"\
+		value="{{data.produce_date}}" />
 
 	 <br><br>
 	 
          <label for="expire_date">{{fluent "expire-date"}}</label>
-         <input type="date" name="expire_date" id="expire_date" value="" />
+         <input type="date" name="expire_date" id="expire_date"\
+		value="{{data.expire_date}}" />
 
 	 <br><br>
 	 
          <label for="number_weight">{{fluent "number-weight"}}</label>
-         <input type="text" name="number_weight" id="number_weight" value="" />
+         <input type="text" name="number_weight" id="number_weight"\
+		value="{{data.number_weight}}" />
 
 	 <br><br>
 	 

@@ -52,7 +52,7 @@ impl<'r> FromRequest<'r> for User {
                     .first(conn)
             })
             .await
-            .expect("Could not load from database");
+            .unwrap_or_else(|_| "".to_string());
 
         let cur_sess_id = sha256sum(username.to_string() + password.as_str());
         let outcome: Outcome<User, Self::Error>;
@@ -63,6 +63,9 @@ impl<'r> FromRequest<'r> for User {
             outcome = Outcome::Forward(());
 	}
         outcome
+
+
+
     }
 }
 
@@ -97,7 +100,7 @@ fn login_page(
 ) -> Template {
     let context = config::Context::new(config::i18n(config), "", &flash);
 
-    println!("{:#?}", context);
+//    println!("{:#?}", context);
     Template::render("login", context)
 }
 
@@ -116,7 +119,7 @@ async fn post_login(
                 .first(conn)
         })
         .await
-        .expect("Could not load from database");
+        .unwrap_or_else(|_| "".to_string());
 
     let sha_login_pass = sha256sum(login.password.to_string());
     let userinfo =

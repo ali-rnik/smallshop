@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html dir={{dir}}>
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width" />
-      <title>Store</title>
-   </head>
-   <body>
+{{#*inline "page"}}
 
       <p> {{ data.session-id }}</p>
 
       <a href="/store/add_item">{{fluent "add-item"}}</a>
    </body>
 </html>
+
+{{/inline}}
+{{~> (parent)~}}

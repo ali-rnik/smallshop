@@ -1,1 +1,0 @@
-show-basket = Show Basket

@@ -1,7 +1,8 @@
-<html dir={{dir}}>
-  
+{{#*inline "page"}}
+
 {{#each data}}
 <p>{{this.1}} {{this.2}} </p>
 {{/each}}
   
-</html>
+{{/inline}}
+{{~> (parent)~}}

@@ -127,6 +127,45 @@ async fn store_delete_item(
     )
 }
 
+#[get("/update_item/<id>")]
+async fn store_update_item(
+    _user: login::User,
+    db: Db,
+    id: i32,
+    config: config::Config,
+) -> Template {
+    let product: models::Product = db
+        .run(move |conn| {
+            schema::products::table
+                .select(schema::products::all_columns)
+                .filter(schema::products::product_id.eq(id))
+                .first(conn)
+        })
+        .await
+        .expect("Could not find id");
+
+    let context = config::Context::new(config::i18n(config), &product, "");
+
+    Template::render("store_update-item", context)
+}
+
+#[post("/update_item_submit", data = "<form_data>")]
+async fn store_update_item_submit(
+    _user: login::User,
+    form_data: Form<models::Product>,
+    db: Db,
+) -> Flash<Redirect> {
+    db.run(move |conn| {
+        diesel::update(schema::products::table)
+            .set(&form_data.into_inner())
+            .execute(conn)
+    })
+    .await
+    .expect("Could not insert into db!");
+
+    Flash::success(Redirect::to(uri!("/store", store_add_item)), "Added Item")
+}
+
 #[get("/add_to_basket/<product_id>/<number>")]
 async fn add_to_basket(
     product_id: i32,
@@ -193,6 +232,8 @@ pub fn stage() -> Vec<rocket::Route> {
         public_store_list_items,
         store_delete_item,
         add_to_basket,
-        show_basket
+        show_basket,
+        store_update_item,
+        store_update_item_submit,
     ]
 }

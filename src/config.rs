@@ -12,6 +12,7 @@ pub struct Config(pub String);
 pub struct Context<T: Serialize, F: Serialize> {
     lang: String,
     dir: String,
+    parent: &'static str,
     pub data: T,
     pub flash: F,
 }
@@ -23,10 +24,15 @@ pub struct Lang {
 }
 
 impl<T: Serialize, F: Serialize> Context<T, F> {
-    pub fn new(lang_struct: Lang, data: T, flash: F) -> Self {
+    pub fn new(
+        lang_struct: Lang,
+        data: T,
+        flash: F,
+    ) -> Self {
         Self {
             lang: lang_struct.lang,
             dir: lang_struct.dir,
+	    parent: "layout",
             data,
             flash,
         }

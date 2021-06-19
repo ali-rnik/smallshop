@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html dir={{dir}} lang={{lang}}>
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width" />
-      <title>{{fluent "login-title"}}</title>
-   </head>
-   <body>
+{{#*inline "page"}}
+
       <h1>{{fluent "login-header"}}</h1>
 
 
@@ -37,6 +31,5 @@
       <p> {{fluent "login-success-message"}} </p>
       {{/if}}
 
-
-   </body>
-</html>
+{{/inline}}
+{{~> (parent)~}}

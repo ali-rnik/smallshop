@@ -1,26 +1,7 @@
-<!DOCTYPE html>
-<html dir={{dir}} lang={{lang}}>
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width" />
-      <title>{{fluent "index-page-title"}}</title>
-   </head>
-   <body>
-
-     <a href="/config/config_set_lang/fa">Fa</a> |
-     <a href="/config/config_set_lang/en">En</a> <br>
-     
-     <h1>{{fluent "index-page-welcome-message"}}</h1>
-
-      <p>{{data.session-id}}</p>
-      
-      <a href="/store">{{fluent "index-page-store"}}</a><br>
-      <a href="/login">{{fluent "index-page-login"}}</a><br>
-      <a href="/store/list_items">{{fluent "index-page-items-list"}}</a><br>
-      <a href="/store/show_basket">{{fluent "show-basket"}}</a><br>
-      <a href="/signup">{{fluent "signup"}}</a><br>
-   </body>
-</html>
+{{#*inline "page"}}
 
 
+<p> hello from index </p>
 
+{{/inline}}
+{{~> (parent)~}}

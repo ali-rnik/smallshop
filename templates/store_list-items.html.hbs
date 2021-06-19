@@ -1,10 +1,15 @@
-<html dir={{dir}}>
+{{#*inline "page"}}
+
 <p> {{fluent "product-name"}} -- {{fluent "product-price"}} </p>
 {{#each data}}
 <p>{{this.1}} {{this.2}} 
 <a href=/store/delete_item/{{this.0}}>Delete</a>
 <a href=/store/add_to_basket/{{this.0}}/1>Add to basket</a>
+<a href=/store/update_item/{{this.0}}>update item</a>
  </p>
 
 {{/each}}
-</html>
+
+
+{{/inline}}
+{{~> (parent)~}}
